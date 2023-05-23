@@ -1,9 +1,13 @@
+import base64
 import os
+import sys
 
+from PySide2.QtGui import QPixmap, QIcon
 from PySide2.QtWidgets import QApplication, QFileDialog
 from PySide2.QtWidgets import QMainWindow
 from openpyxl import Workbook, load_workbook, styles
 
+from icon_base64 import icon_base64
 from ui import Ui_Form
 
 
@@ -16,7 +20,7 @@ class FileWalker(QMainWindow):
         # 连接槽函数与信号
         self.ui.button_page_main.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(0))  # 切换页面
         self.ui.button_page_setting.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(1))  # 切换页面
-        self.ui.button_quit.clicked.connect(lambda: exit(1))
+        self.ui.button_quit.clicked.connect(lambda: sys.exit(1))
         self.ui.button_walk.clicked.connect(self.start_walk)
         self.ui.button_ask_path.clicked.connect(
             lambda: self.ui.lineedit_path.setText(QFileDialog.getExistingDirectory(self, "选择文件夹")))
@@ -191,9 +195,18 @@ class FileWalker(QMainWindow):
         return walk_dict
 
 
+def base64_to_icon():
+    """转换base64为图片用于图标"""
+    pixmap = QPixmap()
+    pixmap.loadFromData(base64.b64decode(icon_base64))
+    icon = QIcon(pixmap)
+    return icon
+
+
 app = QApplication([])
 app.setStyle('Fusion')
 show_ui = FileWalker()
 show_ui.setFixedSize(282, 81)
+show_ui.setWindowIcon(QIcon(base64_to_icon()))
 show_ui.show()
 app.exec_()
