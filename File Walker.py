@@ -32,13 +32,9 @@ class FileWalker(QMainWindow):
         folder = self.ui.lineedit_path.text()  # 获取要遍历的路径
         if folder and os.path.exists(folder):
             self.ui.button_open_result.setEnabled(False)  # 关闭按钮
-            print('测试 断点1')
             walk_result = self.walk_files_with_folder(folder)
-            print('测试 断点2')
             walk_result_with_size = self.get_folder_size(folder, walk_result)
-            print('测试 断点3')
             self.save_xlsx(walk_result_with_size)
-            print('测试 断点4')
             if self.ui.checkbox_hyperlink.isChecked():  # 检查超链接按钮
                 self.add_hyperlink()
             self.check_size()  # 检查显示文件大小按钮
@@ -46,7 +42,6 @@ class FileWalker(QMainWindow):
 
     def save_xlsx(self, walk_result):
         """保存结果为xlsx文件"""
-        print('测试：执行 save_xlsx')
         wb = Workbook()
         wb.save('遍历结果.xlsx')  # 新建或覆盖xlsx文件
 
@@ -91,7 +86,6 @@ class FileWalker(QMainWindow):
     @staticmethod
     def add_hyperlink():
         """添加超链接"""
-        print('测试：执行 add_hyperlink')
         wb = load_workbook('遍历结果.xlsx')
         ws = wb.active
         max_row = ws.max_row
@@ -125,7 +119,7 @@ class FileWalker(QMainWindow):
                 for row in range(2, max_row + 1):
                     ws[f'C{row}'] = round(ws[f'C{row}'].value / 1024 / 1024 / 1024, 2)
         else:
-            ws.delete_rows(3)  # 删除"文件大小"列
+            ws.delete_cols(3)  # 删除"文件大小"列
         wb.save('遍历结果.xlsx')
 
     @staticmethod
@@ -134,7 +128,6 @@ class FileWalker(QMainWindow):
         """函数逻辑：
         os.listdir遍历文件夹，如果是文件则返回，如果是文件夹则递归
         保存文件结构：文件名、文件路径、文件大小、是文件还是文件夹"""
-        print('测试：执行 walk_files_with_folder')
         walk_result = {}
 
         def loop_walk(the_folder):
@@ -173,7 +166,6 @@ class FileWalker(QMainWindow):
     def get_folder_size(the_top_folder, walk_dict):
         """根据遍历所得的字典获取其中文件夹的大小"""
         # 提取文件夹大小的逻辑：取得一个文件路径，将该文件的大小在每一级文件夹中加上
-        print('测试：执行 get_folder_size')
         file_in_walk_dict = [key for key in walk_dict if os.path.isfile(key)]  # 提取遍历字典中的文件
         file_in_walk_dict = file_in_walk_dict[::-1]  # 反转列表，实现文件夹层级多的在前面
         get_folder_size_dict = {}
